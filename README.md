@@ -1,6 +1,6 @@
 # spells_test
 
-A new Flutter project.
+Early testing of autofill for hitting Open5e api.  Probably won't develop this much further, just proof of concept for later work
 
 ## Getting Started
 
