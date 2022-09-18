@@ -46,16 +46,7 @@ class MainPage extends ConsumerWidget {
       print(url);
       final response = await dio.get(url);
 
-      return Spell(
-          slug: response.data['slug'],
-          name: response.data['name'],
-          description: response.data['desc'],
-          higherLevel: response.data['higher_level'],
-          range: response.data['range'],
-          material: response.data['material'],
-          duration: response.data['duration'],
-          level: response.data['level_int'],
-          school: response.data['school']);
+      return Spell.fromJson(response.data);
     }
 
     getSpellsList();
@@ -70,7 +61,7 @@ class MainPage extends ConsumerWidget {
               }
               return spellLookupList.where((String option) {
                 option = option.toLowerCase();
-                return option.contains(textEditingValue.text);
+                return option.contains(textEditingValue.text.toLowerCase());
               });
             },
             onSelected: (String selection) async {
@@ -87,10 +78,11 @@ class MainPage extends ConsumerWidget {
                   (ref.watch(spellProvider).level > 0
                       ? ref.watch(spellProvider).level.toString()
                       : 'Cantrip')),
-              Text("School: " + ref.watch(spellProvider).school),
-              Text("Description: " + ref.watch(spellProvider).description),
               Text("Duration: " + ref.watch(spellProvider).duration),
               Text("Range: " + ref.watch(spellProvider).range),
+              Text("Classes: " + ref.watch(spellProvider).classes.toString()),
+              Text("School: " + ref.watch(spellProvider).school),
+              Text("Description: " + ref.watch(spellProvider).description),
             ],
           ),
         ]),
