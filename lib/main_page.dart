@@ -51,41 +51,74 @@ class MainPage extends ConsumerWidget {
 
     getSpellsList();
 
+    var scSize = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Container(
-        child: ListView(children: [
-          Autocomplete<String>(
-            optionsBuilder: (TextEditingValue textEditingValue) {
-              if (textEditingValue.text == '') {
-                return const Iterable<String>.empty();
-              }
-              return spellLookupList.where((String option) {
-                option = option.toLowerCase();
-                return option.contains(textEditingValue.text.toLowerCase());
-              });
-            },
-            onSelected: (String selection) async {
-              debugPrint('You just selected $selection');
-              ref.read(spellProvider.notifier).state =
-                  await fetchSpell(convertToSlug(selection));
-            },
+        color: Colors.blue,
+        child: Center(
+          child: Container(
+            width: scSize.width * .85,
+            height: scSize.height * .75,
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(5)),
+            child: ListView(children: [
+              Autocomplete<String>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text == '') {
+                    return const Iterable<String>.empty();
+                  }
+                  return spellLookupList.where((String option) {
+                    option = option.toLowerCase();
+                    return option.contains(textEditingValue.text.toLowerCase());
+                  });
+                },
+                onSelected: (String selection) async {
+                  debugPrint('You just selected $selection');
+                  ref.read(spellProvider.notifier).state =
+                      await fetchSpell(convertToSlug(selection));
+                },
+                fieldViewBuilder: (BuildContext context,
+                    TextEditingController fieldTextEditingController,
+                    FocusNode fieldFocusNode,
+                    VoidCallback onFieldSubmitted) {
+                  return TextField(
+                    autofocus: true,
+                    autofillHints: ['Start typing a spell...'],
+                    textAlign: TextAlign.center,
+                    controller: fieldTextEditingController,
+                    focusNode: fieldFocusNode,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  );
+                },
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (ref.watch(spellProvider).name != '') Text("Name"),
+                  Text(ref.watch(spellProvider).name),
+                  if (ref.watch(spellProvider).name != '') Text("Level"),
+                  if (ref.watch(spellProvider).name != '')
+                    Text(ref.watch(spellProvider).level > 0
+                        ? ref.watch(spellProvider).level.toString()
+                        : 'Cantrip'),
+                  if (ref.watch(spellProvider).name != '') Text("Duration"),
+                  Text(ref.watch(spellProvider).duration),
+                  if (ref.watch(spellProvider).name != '') Text("Range"),
+                  Text(ref.watch(spellProvider).range),
+                  if (ref.watch(spellProvider).classes.isNotEmpty)
+                    Text("Classes"),
+                  if (ref.watch(spellProvider).classes.isNotEmpty)
+                    Text(ref.watch(spellProvider).classes.toString()),
+                  if (ref.watch(spellProvider).name != '') Text("School"),
+                  Text(ref.watch(spellProvider).school),
+                  if (ref.watch(spellProvider).name != '') Text("Description"),
+                  Text(ref.watch(spellProvider).description),
+                ],
+              ),
+            ]),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Name: " + ref.watch(spellProvider).name),
-              Text("Level: " +
-                  (ref.watch(spellProvider).level > 0
-                      ? ref.watch(spellProvider).level.toString()
-                      : 'Cantrip')),
-              Text("Duration: " + ref.watch(spellProvider).duration),
-              Text("Range: " + ref.watch(spellProvider).range),
-              Text("Classes: " + ref.watch(spellProvider).classes.toString()),
-              Text("School: " + ref.watch(spellProvider).school),
-              Text("Description: " + ref.watch(spellProvider).description),
-            ],
-          ),
-        ]),
+        ),
       ),
     );
   }
