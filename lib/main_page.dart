@@ -35,8 +35,10 @@ class MainPage extends ConsumerWidget {
     }
 
     String convertToSlug(String name) {
+      print(name);
+      name = name.replaceAll(RegExp(r'[^\w\s]+'), '');
       name = name.replaceAll(' ', '-');
-      name = name.replaceAll("'", '');
+      print(name);
       return name.toLowerCase();
     }
 
@@ -91,7 +93,7 @@ class MainPage extends ConsumerWidget {
             image: DecorationImage(
                 image: AssetImage("parchment_bg.jpg"),
                 fit: BoxFit.cover,
-                opacity: .85)),
+                opacity: .72)),
         child: Center(
           child: Container(
             width: scSize.width * .85,
@@ -190,8 +192,8 @@ class MainPage extends ConsumerWidget {
                       child: Text(
                         ref.watch(spellProvider).description,
                         style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16,
                         ),
                       ),
                     ),
