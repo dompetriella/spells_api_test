@@ -1,6 +1,6 @@
 {
-    "name": "spells_test",
-    "short_name": "spells_test",
+    "name": "Magic Answer",
+    "short_name": "Magic Answer",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
