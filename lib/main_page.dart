@@ -49,21 +49,74 @@ class MainPage extends ConsumerWidget {
       return Spell.fromJson(response.data);
     }
 
+    String getTrailing(int num) {
+      String returnString = '';
+      switch (num) {
+        case 1:
+          returnString = 'st';
+          break;
+        case 1:
+          returnString = 'st';
+          break;
+        case 2:
+          returnString = 'nd';
+          break;
+        case 3:
+          returnString = 'rd';
+          break;
+        default:
+          returnString = 'th';
+      }
+
+      return returnString;
+    }
+
+    String capitalize(String inputString) {
+      return "${inputString[0].toUpperCase()}${inputString.substring(1).toLowerCase()}";
+    }
+
     getSpellsList();
 
     var scSize = MediaQuery.of(context).size;
+    TextStyle heading = TextStyle(fontWeight: FontWeight.w800, fontSize: 16);
 
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Magic Answer Lookup"),
+        backgroundColor: Colors.black,
+      ),
       body: Container(
-        color: Colors.blue,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("parchment_bg.jpg"),
+                fit: BoxFit.cover,
+                opacity: .85)),
         child: Center(
           child: Container(
             width: scSize.width * .85,
-            height: scSize.height * .75,
+            height: scSize.height * .85,
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              borderRadius: BorderRadius.circular(5),
+            ),
             child: ListView(children: [
               Autocomplete<String>(
+                optionsViewBuilder: (context, onSelected, options) => Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    child: SizedBox(
+                      width: scSize.width * .85,
+                      child: ListView(
+                        children: options
+                            .map((e) => ListTile(
+                                  onTap: () => onSelected(e),
+                                  title: Text(e),
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ),
                 optionsBuilder: (TextEditingValue textEditingValue) {
                   if (textEditingValue.text == '') {
                     return const Iterable<String>.empty();
@@ -83,38 +136,67 @@ class MainPage extends ConsumerWidget {
                     FocusNode fieldFocusNode,
                     VoidCallback onFieldSubmitted) {
                   return TextField(
+                    decoration: InputDecoration.collapsed(
+                        hintText: 'Start typing a spell...'),
                     autofocus: true,
-                    autofillHints: ['Start typing a spell...'],
+                    cursorColor: Colors.black,
                     textAlign: TextAlign.center,
                     controller: fieldTextEditingController,
                     focusNode: fieldFocusNode,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 35),
                   );
                 },
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (ref.watch(spellProvider).name != '') Text("Name"),
-                  Text(ref.watch(spellProvider).name),
-                  if (ref.watch(spellProvider).name != '') Text("Level"),
-                  if (ref.watch(spellProvider).name != '')
-                    Text(ref.watch(spellProvider).level > 0
-                        ? ref.watch(spellProvider).level.toString()
-                        : 'Cantrip'),
-                  if (ref.watch(spellProvider).name != '') Text("Duration"),
-                  Text(ref.watch(spellProvider).duration),
-                  if (ref.watch(spellProvider).name != '') Text("Range"),
-                  Text(ref.watch(spellProvider).range),
-                  if (ref.watch(spellProvider).classes.isNotEmpty)
-                    Text("Classes"),
-                  if (ref.watch(spellProvider).classes.isNotEmpty)
-                    Text(ref.watch(spellProvider).classes.toString()),
-                  if (ref.watch(spellProvider).name != '') Text("School"),
-                  Text(ref.watch(spellProvider).school),
-                  if (ref.watch(spellProvider).name != '') Text("Description"),
-                  Text(ref.watch(spellProvider).description),
-                ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 15, 8.0, 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (ref.watch(spellProvider).name != '')
+                      Center(
+                        child: Text(
+                          "${ref.watch(spellProvider).level > 0 ? ((ref.watch(spellProvider).level.toString() + getTrailing(ref.watch(spellProvider).level) + ' Level')) : 'Cantrip'} ${capitalize(ref.watch(spellProvider).school)}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w200, fontSize: 20),
+                        ),
+                      ),
+                    Center(
+                        child: Text(
+                      ref.watch(spellProvider).classes,
+                      style:
+                          TextStyle(fontWeight: FontWeight.w200, fontSize: 15),
+                    )),
+                    if (ref.watch(spellProvider).name != '')
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "Duration",
+                          style: heading,
+                        ),
+                      ),
+                    Text(ref.watch(spellProvider).duration),
+                    if (ref.watch(spellProvider).name != '')
+                      Text("Range", style: heading),
+                    Text(ref.watch(spellProvider).range),
+                    if (ref.watch(spellProvider).name != '')
+                      Text(
+                        "Casting Time",
+                        style: heading,
+                      ),
+                    Text(ref.watch(spellProvider).castingTime),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        ref.watch(spellProvider).description,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ]),
           ),

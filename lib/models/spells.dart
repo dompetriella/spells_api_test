@@ -8,7 +8,8 @@ class Spell {
   final String duration;
   final int level;
   final String school;
-  final List<String> classes;
+  final String castingTime;
+  final String classes;
 
   Spell({
     required this.slug,
@@ -21,10 +22,11 @@ class Spell {
     this.material = '',
     this.duration = '',
     this.school = '',
+    this.castingTime = '',
   });
 
   static Spell fromJson(dynamic rawJson) {
-    List<String> classes =
+    List<String> classesList =
         (rawJson['dnd_class'].replaceAll(' ', '')).split(',');
     return Spell(
         slug: rawJson['slug'],
@@ -33,10 +35,11 @@ class Spell {
         higherLevel: rawJson['higher_level'],
         range: rawJson['range'],
         material: rawJson['material'],
+        castingTime: rawJson['casting_time'],
         duration: rawJson['duration'],
         level: rawJson['level_int'],
         school: rawJson['school'],
-        classes: classes);
+        classes: classesList.join(" "));
   }
 }
 
